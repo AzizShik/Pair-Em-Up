@@ -1,16 +1,39 @@
-$body-bg-color: #e3f2fd;
-$text-color: #222;
-$text-color-second: #fff;
-$piano-bg: #222;
-$piano-white-notes: #fff;
-$piano-black-notes: #111;
-$piano-notes-border: #333;
-$piano-white-notes-hover: #dbdbdb;
-$piano-black-notes-hover: #232323;
-$piano-white-notes-active: #ccc;
-$piano-black-notes-active: #303030;
-$piano-edit-button-border: #a0a0a0;
-$edit-input-focus: #878787;
-$notification-bg: #222;
-$notification-message: #ff2d2d;
-$sequence-btn-bg: #333;
+:root {
+  --color-bg-light: #f7f9fc;
+  --color-bg-dark: #1f2937;
+  --color-card-light: #fff;
+  --color-card-dark: #374151;
+  --color-text-light: #1f2937;
+  --color-text-dark: #f9fafb;
+  --color-accent: #3b82f6;
+  --color-button-hover: #1e71f8;
+  --color-button-active: #0445af;
+  --color-cell-empty: #e5e7eb;
+  --color-cell-number: #f3f4f6;
+  --color-cell-selected: #a5b4fc;
+  --color-cell-valid: #4ade80;
+  --button-border-radius: 4px;
+  --button-border-radius-active: 10px;
+  --card-border-radius: 10px;
+  --color-button-controls: #0062ff;
+}
+
+[data-theme='dark'] {
+  --color-bg: var(--color-bg-dark);
+  --color-card: var(--color-card-dark);
+  --color-text: var(--color-text-dark);
+  --color-cell-empty: #374151;
+  --color-cell-number: #1f2937;
+  --box-shadow-first-color: #ffffff29;
+  --box-shadow-second-color: #ffffff3b;
+}
+
+[data-theme='light'] {
+  --color-bg: var(--color-bg-light);
+  --color-card: var(--color-card-light);
+  --color-text: var(--color-text-light);
+  --color-cell-empty: #f3f4f6;
+  --color-cell-number: #fff;
+  --box-shadow-first-color: #00000029;
+  --box-shadow-second-color: #0000003b;
+}

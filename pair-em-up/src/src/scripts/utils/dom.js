@@ -1,20 +1,22 @@
-export default function createElement(options) {
+export function createElement(options) {
   const {
     tag = 'div',
     text = '',
     parent,
     children = [],
-    classes = [],
+    classArr = [],
+    id = '',
     data = {},
     attr = {},
     src = '',
+    href = '',
   } = options;
 
   const element = document.createElement(tag);
   element.textContent = text;
 
-  if (classes.length > 0) {
-    element.classList.add(...classes);
+  if (classArr.length > 0) {
+    element.classList.add(...classArr);
   }
 
   if (parent != null) {
@@ -27,6 +29,14 @@ export default function createElement(options) {
 
   if (src) {
     element.src = src;
+  }
+
+  if (id) {
+    element.id = id;
+  }
+
+  if (href) {
+    element.href = href;
   }
 
   Object.entries(data).forEach(([key, value]) => {
@@ -42,4 +52,8 @@ export default function createElement(options) {
   });
 
   return element;
+}
+
+export function qsElement(selector, root = document) {
+  return root.querySelector(selector);
 }
