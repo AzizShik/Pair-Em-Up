@@ -22,7 +22,7 @@ export function createGame(screenManager) {
       screenManager.registerScreen(screenName, constuctor);
     });
 
-    loadSettings();
+    storage.loadSettings();
 
     if (currentSettings?.theme) {
       applyTheme(currentSettings.theme);
@@ -37,12 +37,12 @@ export function createGame(screenManager) {
       modalController.onThemeChange = theme => {
         currentSettings.theme = theme;
         applyTheme(theme);
-        saveSettings();
+        storage.saveSettings(currentSettings);
       };
 
       modalController.onAudioToggle = enabled => {
         currentSettings.audioEnabled = enabled;
-        saveSettings();
+        storage.saveSettings(currentSettings);
       };
 
       modalController.onReset = () => {
@@ -51,11 +51,11 @@ export function createGame(screenManager) {
           theme: 'light',
         };
         applyTheme('light');
-        saveSettings();
+        storage.saveSettings(currentSettings);
       };
 
       modalController.onClose = () => {
-        saveSettings();
+        storage.saveSettings(currentSettings);
       };
     }
 
@@ -68,6 +68,7 @@ export function createGame(screenManager) {
     const controller = screenManager.getCurrentController();
     if (controller) {
       controller.onSettings = showSettingsModal;
+      controller.onResults = showResultsModal;
     }
   }
 
@@ -81,17 +82,19 @@ export function createGame(screenManager) {
     }
   }
 
-  function loadSettings() {
-    const loaded = storage.loadSettings();
-    if (loaded) {
-      currentSettings = { ...currentSettings, ...loaded };
-    }
-  }
+  function showResultsModal() {
+    const resultsModal = ui.getResultsModal();
+    if (!resultsModal || !resultsModal.controller) return;
 
-  function saveSettings() {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    saved.settings = { ...currentSettings };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+    const results = storage.loadResults();
+
+    console.log(results);
+
+    if (typeof resultsModal.render === 'function') {
+      resultsModal.render(results);
+    }
+
+    resultsModal.controller.show();
   }
 
   function applyTheme(theme) {
@@ -103,5 +106,6 @@ export function createGame(screenManager) {
     init,
     showStartScreen,
     showSettingsModal,
+    showResultsModal,
   };
 }

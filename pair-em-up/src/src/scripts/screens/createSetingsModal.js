@@ -1,5 +1,4 @@
 import { createElement, qsElement } from '../utils/dom.js';
-import { STORAGE_KEY } from '../constants.js';
 
 export function createSettingsModal() {
   const modal = createElement({

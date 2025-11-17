@@ -11,12 +11,26 @@ export function createStorage() {
   }
 
   return {
-    loadSettings: function () {
+    loadSettings() {
       const data = loadData();
-      if (!data.settings) {
-        return gameState.settings;
-      }
-      return data.settings;
+      return data.settings || gameState.settings;
+    },
+
+    saveSettings(settings) {
+      const data = loadData();
+      data.settings = settings;
+      saveData(data);
+    },
+
+    loadResults() {
+      const data = loadData();
+      return data.results || [];
+    },
+
+    saveResults(results) {
+      const data = loadData();
+      data.results = results;
+      saveData(data);
     },
   };
 }
