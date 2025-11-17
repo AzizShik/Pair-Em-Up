@@ -71,15 +71,19 @@ body {
     0 3px 6px var(--box-shadow-first-color),
     0 3px 6px var(--box-shadow-second-color);
   transition: all 0.3s ease;
-}
 
-.button--controls {
-  background: var(--color-button-controls);
-}
+  &--secondary {
+    background-color: #6c757d;
+  }
 
-.button--disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  &--controls {
+    background: var(--color-button-controls);
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 @media (hover: hover) {

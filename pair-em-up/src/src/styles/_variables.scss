@@ -12,10 +12,12 @@
   --color-cell-number: #f3f4f6;
   --color-cell-selected: #a5b4fc;
   --color-cell-valid: #4ade80;
+  --color-button-controls: #0062ff;
+  --border-color-light: #dee2e6;
+  --border-color-dark: #495057;
   --button-border-radius: 4px;
   --button-border-radius-active: 10px;
   --card-border-radius: 10px;
-  --color-button-controls: #0062ff;
 }
 
 [data-theme='dark'] {
@@ -26,12 +28,14 @@
   --color-cell-number: #1f2937;
   --box-shadow-first-color: #ffffff29;
   --box-shadow-second-color: #ffffff3b;
+  --border-color: var(--border-color-dark);
 }
 
 [data-theme='light'] {
   --color-bg: var(--color-bg-light);
   --color-card: var(--color-card-light);
   --color-text: var(--color-text-light);
+  --border-color: var(--border-color-light);
   --color-cell-empty: #f3f4f6;
   --color-cell-number: #fff;
   --box-shadow-first-color: #00000029;

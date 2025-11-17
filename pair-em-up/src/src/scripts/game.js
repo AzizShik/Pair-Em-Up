@@ -12,6 +12,8 @@ export function createGame(screenManager) {
   const ui = createUI();
   const storage = createStorage();
 
+  let currentSettings = storage.loadSettings() || { ...gameState.settings };
+
   function init() {
     const screenNames = ui.getAllScreenNames();
 
@@ -20,15 +22,44 @@ export function createGame(screenManager) {
       screenManager.registerScreen(screenName, constuctor);
     });
 
-    showStartScreen();
+    loadSettings();
 
-    const settings = storage.loadSettings();
-
-    if (settings?.theme) {
-      document.documentElement.dataset.theme = settings.theme;
+    if (currentSettings?.theme) {
+      applyTheme(currentSettings.theme);
     } else {
-      document.documentElement.dataset.theme = 'light';
+      applyTheme('light');
     }
+
+    const settingsModal = ui.getSettingsModal();
+    if (settingsModal && settingsModal.controller) {
+      const modalController = settingsModal.controller;
+
+      modalController.onThemeChange = theme => {
+        currentSettings.theme = theme;
+        applyTheme(theme);
+        saveSettings();
+      };
+
+      modalController.onAudioToggle = enabled => {
+        currentSettings.audioEnabled = enabled;
+        saveSettings();
+      };
+
+      modalController.onReset = () => {
+        currentSettings = {
+          audioEnabled: true,
+          theme: 'light',
+        };
+        applyTheme('light');
+        saveSettings();
+      };
+
+      modalController.onClose = () => {
+        saveSettings();
+      };
+    }
+
+    showStartScreen();
   }
 
   function showStartScreen() {
@@ -36,19 +67,41 @@ export function createGame(screenManager) {
 
     const controller = screenManager.getCurrentController();
     if (controller) {
-      // controller.onModeSelect = startGame;
-      // controller.onContinue = continueGame;
-      controller.onSettings = showSettingsScreen;
-      // controller.onResults = showResultsScreen;
+      controller.onSettings = showSettingsModal;
     }
   }
 
-  function showSettingsScreen() {
-    console.log('settings');
+  function showSettingsModal() {
+    const settingsModal = ui.getSettingsModal();
+    if (settingsModal && settingsModal.controller) {
+      if (typeof settingsModal.controller.setSettings === 'function') {
+        settingsModal.controller.setSettings(currentSettings);
+      }
+      settingsModal.controller.show();
+    }
+  }
+
+  function loadSettings() {
+    const loaded = storage.loadSettings();
+    if (loaded) {
+      currentSettings = { ...currentSettings, ...loaded };
+    }
+  }
+
+  function saveSettings() {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    saved.settings = { ...currentSettings };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+  }
+
+  function applyTheme(theme) {
+    if (!theme) return;
+    document.documentElement.setAttribute('data-theme', theme);
   }
 
   return {
     init,
     showStartScreen,
+    showSettingsModal,
   };
 }
