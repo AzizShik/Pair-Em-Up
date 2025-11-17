@@ -1,4 +1,6 @@
+import { createStorage } from '../storage.js';
 import { createElement, qsElement } from '../utils/dom.js';
+import { openModal, closeCurrentModal } from '../utils/modal.js';
 
 export function createSettingsModal() {
   const modal = createElement({
@@ -157,10 +159,8 @@ export function createSettingsModal() {
     setSettings: null,
   };
 
-  let currentSettings = {
-    audioEnabled: true,
-    theme: 'light',
-  };
+  const storage = createStorage();
+  let currentSettings = storage.loadSettings();
 
   function setupEventListeners() {
     const closeBtn = qsElement('#modal-close', modal);
@@ -193,15 +193,16 @@ export function createSettingsModal() {
   }
 
   function show() {
-    updateUI();
-    modal.classList.add('modal--active');
-    document.body.style.overflow = 'hidden';
+    openModal(modal);
+    updateUI?.();
+    setupEventListeners();
   }
 
   function hide() {
-    modal.classList.remove('modal--active');
-    document.body.style.overflow = '';
-    if (controller.onClose) controller.onClose();
+    closeCurrentModal();
+    setTimeout(() => {
+      if (controller.onClose) controller.onClose();
+    }, 300);
   }
 
   function setSettings(settings) {
@@ -231,10 +232,6 @@ export function createSettingsModal() {
   function getCurrentSettings() {
     return { ...currentSettings };
   }
-
-  document.body.appendChild(modal);
-
-  setupEventListeners();
 
   controller.show = show;
   controller.hide = hide;

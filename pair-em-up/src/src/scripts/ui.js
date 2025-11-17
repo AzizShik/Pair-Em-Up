@@ -3,11 +3,12 @@ import { gameState } from './gameState.js';
 import { createStartScreen } from './screens/createStartScreen.js';
 import { createSettingsModal } from './screens/createSetingsModal.js';
 import { createResultsModal } from './screens/createResultsModal.js';
+import { createGameScreen } from './screens/createGamescreen.js';
 
 export function createUI() {
   const screenConstructors = {
     start: createStartScreen,
-    // game: '',
+    game: createGameScreen,
   };
 
   const settingsModal = createSettingsModal();

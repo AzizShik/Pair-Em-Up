@@ -1,10 +1,11 @@
 import { createElement, qsElement } from '../utils/dom.js';
+import { openModal, closeCurrentModal } from '../utils/modal.js';
 import { STORAGE_KEY } from '../constants.js';
 
 export function createResultsModal() {
   const modal = createElement({
     tag: 'div',
-    classArr: ['modal', 'settings-modal'],
+    classArr: ['modal', 'results-modal'],
   });
 
   const overlay = createElement({
@@ -51,8 +52,6 @@ export function createResultsModal() {
   });
 
   const resultsTableHeaderTitles = ['Mode', 'Score', 'Time', 'Results'];
-
-  console.log(resultsTableHeaderTitles);
 
   const resultsTableHeader = createElement({
     tag: 'div',
@@ -139,19 +138,13 @@ export function createResultsModal() {
   }
 
   function show() {
-    modal.classList.add('modal--active');
-    document.body.style.overflow = 'hidden';
+    openModal(modal);
+    setupEventListeners();
   }
 
   function hide() {
-    modal.classList.remove('modal--active');
-    document.body.style.overflow = '';
-    if (controller.onClose) controller.onClose();
+    closeCurrentModal();
   }
-
-  document.body.appendChild(modal);
-
-  setupEventListeners();
 
   controller.show = show;
   controller.hide = hide;

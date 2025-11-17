@@ -1,111 +1,87 @@
-import { STORAGE_KEY } from './constants';
-import { gameState } from './gameState';
-import { createStorage } from './storage';
-import { createUI } from './ui';
+import { createUI } from './ui.js';
+import { gameState } from './gameState.js';
+import { createStorage } from './storage.js';
 
 export function createGame(screenManager) {
-  let timerInterval = null;
-  let startTime = null;
-  let elapsedTime = 0;
-  let timerCallback = null;
-
   const ui = createUI();
   const storage = createStorage();
-
-  let currentSettings = storage.loadSettings() || { ...gameState.settings };
+  let currentSettings = storage.loadSettings();
 
   function init() {
     const screenNames = ui.getAllScreenNames();
-
-    screenNames.forEach(screenName => {
-      const constuctor = ui.getScreenConstructor(screenName);
-      screenManager.registerScreen(screenName, constuctor);
+    screenNames.forEach(name => {
+      const ctor = ui.getScreenConstructor(name);
+      if (ctor) screenManager.registerScreen(name, ctor);
     });
 
-    storage.loadSettings();
+    applyTheme(currentSettings.theme || 'light');
+    setupModals();
+    showStartScreen();
+  }
 
-    if (currentSettings?.theme) {
-      applyTheme(currentSettings.theme);
-    } else {
-      applyTheme('light');
-    }
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
 
+  function setupModals() {
     const settingsModal = ui.getSettingsModal();
-    if (settingsModal && settingsModal.controller) {
-      const modalController = settingsModal.controller;
-
-      modalController.onThemeChange = theme => {
+    if (settingsModal?.controller) {
+      settingsModal.controller.onThemeChange = theme => {
         currentSettings.theme = theme;
         applyTheme(theme);
         storage.saveSettings(currentSettings);
       };
-
-      modalController.onAudioToggle = enabled => {
+      settingsModal.controller.onAudioToggle = enabled => {
         currentSettings.audioEnabled = enabled;
         storage.saveSettings(currentSettings);
       };
-
-      modalController.onReset = () => {
-        currentSettings = {
-          audioEnabled: true,
-          theme: 'light',
-        };
+      settingsModal.controller.onReset = () => {
+        currentSettings = { theme: 'light', audioEnabled: true };
         applyTheme('light');
         storage.saveSettings(currentSettings);
       };
-
-      modalController.onClose = () => {
-        storage.saveSettings(currentSettings);
-      };
     }
-
-    showStartScreen();
   }
 
   function showStartScreen() {
     screenManager.showScreen('start');
 
     const controller = screenManager.getCurrentController();
-    if (controller) {
-      controller.onSettings = showSettingsModal;
-      controller.onResults = showResultsModal;
-    }
-  }
+    if (!controller) return;
 
-  function showSettingsModal() {
-    const settingsModal = ui.getSettingsModal();
-    if (settingsModal && settingsModal.controller) {
-      if (typeof settingsModal.controller.setSettings === 'function') {
-        settingsModal.controller.setSettings(currentSettings);
+    controller.onModeSelect = mode => {
+      gameState.mode = mode;
+
+      screenManager.showScreen('game', { mode });
+    };
+
+    controller.onContinue = () => {
+      const savedGame = storage.loadCurrentGame();
+
+      if (!savedGame) {
+        controller.disableContinue?.();
+        return;
       }
-      settingsModal.controller.show();
-    }
+
+      Object.assign(gameState, savedGame.gameState);
+      screenManager.showScreen('game', {
+        mode: gameState.mode,
+        savedState: savedGame,
+      });
+    };
+
+    controller.onSettings = () => ui.getSettingsModal().controller.show();
+
+    controller.onResults = () => {
+      const results = storage.loadResults();
+      const modal = ui.getResultsModal();
+      if (modal.render) {
+        const top5 = results.sort((a, b) => a.timeSec - b.timeSec).slice(0, 5);
+        modal.render(top5);
+      }
+      modal.controller.show();
+    };
   }
 
-  function showResultsModal() {
-    const resultsModal = ui.getResultsModal();
-    if (!resultsModal || !resultsModal.controller) return;
-
-    const results = storage.loadResults();
-
-    console.log(results);
-
-    if (typeof resultsModal.render === 'function') {
-      resultsModal.render(results);
-    }
-
-    resultsModal.controller.show();
-  }
-
-  function applyTheme(theme) {
-    if (!theme) return;
-    document.documentElement.setAttribute('data-theme', theme);
-  }
-
-  return {
-    init,
-    showStartScreen,
-    showSettingsModal,
-    showResultsModal,
-  };
+  return { init };
 }
