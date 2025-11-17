@@ -4,20 +4,15 @@ import { createUI } from './ui.js';
 import { gameState } from './gameState.js';
 import { STORAGE_KEY } from './constants.js';
 import { createStorage } from './storage.js';
-
-const storage = createStorage();
-const ui = createUI();
+import { createScreenManager } from './screenManager.js';
+import { createGame } from './game.js';
 
 document.addEventListener('DOMContentLoaded', e => {
-  initGame();
+  const appEl = createElement({ tag: 'div', classArr: ['app'], id: 'app' });
+  document.body.append(appEl);
 
-  ui.createStartScreen();
+  const screenManager = createScreenManager(appEl);
+  const game = createGame(screenManager);
 
-  document.documentElement.dataset.theme = 'light';
+  game.init();
 });
-
-function initGame() {
-  if (localStorage.getItem(STORAGE_KEY)) {
-    Object.assign(gameState, storage.loadData());
-  }
-}

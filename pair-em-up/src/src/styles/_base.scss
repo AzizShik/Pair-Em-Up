@@ -95,7 +95,7 @@ body {
 }
 
 @media (hover: none) and (pointer: coarse) {
-  .button:active {
+  .button:active:enabled {
     border-radius: var(--button-border-radius-active);
   }
 }

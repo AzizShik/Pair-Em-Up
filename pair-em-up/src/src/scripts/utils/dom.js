@@ -20,7 +20,7 @@ export function createElement(options) {
   }
 
   if (parent != null) {
-    parent.appendChild(element);
+    parent.append(element);
   }
 
   if (children.length > 0) {
@@ -56,4 +56,8 @@ export function createElement(options) {
 
 export function qsElement(selector, root = document) {
   return root.querySelector(selector);
+}
+
+export function qsAll(selector, root = document) {
+  return root.querySelectorAll(selector);
 }

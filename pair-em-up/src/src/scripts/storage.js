@@ -13,10 +13,10 @@ export function createStorage() {
   return {
     loadSettings: function () {
       const data = loadData();
-      return {
-        audioEnabled: data.settings?.audioEnabled ?? true,
-        theme: data.settings?.theme ?? 'light',
-      };
+      if (!data.settings) {
+        return gameState.settings;
+      }
+      return data.settings;
     },
   };
 }
