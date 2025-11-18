@@ -2,7 +2,8 @@
 
 h1,
 h2,
-h3 {
+h3,
+p {
   margin: 0;
   padding: 0;
 }
@@ -35,71 +36,19 @@ html {
 }
 
 body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
   min-height: 100vh;
   font-family: Montserrat, sans-serif;
   font-size: 16px;
   font-weight: 400;
-  padding-top: 20px;
-  padding-bottom: 20px;
   background: var(--color-bg);
   color: var(--color-text);
 }
 
 .app {
+  padding: 20px;
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 20px;
   width: 100%;
   height: 100%;
-}
-
-.button {
-  background: var(--color-accent);
-  color: var(--color-text-dark);
-  padding: 15px 22px;
-  font-size: 18px;
-  border: 1px solid var(--color-accent);
-  border-radius: var(--button-border-radius);
-  box-shadow:
-    0 3px 6px var(--box-shadow-first-color),
-    0 3px 6px var(--box-shadow-second-color);
-  transition: all 0.3s ease;
-
-  &--secondary {
-    background-color: #6c757d;
-  }
-
-  &--controls {
-    background: var(--color-button-controls);
-  }
-
-  &--disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-@media (hover: hover) {
-  .button:hover:enabled {
-    border-color: var(--color-bg);
-    background-color: var(--color-button-hover);
-  }
-
-  .button:active:enabled {
-    border-radius: var(--button-border-radius-active);
-    background: var(--color-button-active);
-  }
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .button:active:enabled {
-    border-radius: var(--button-border-radius-active);
-  }
+  min-height: 100vh;
 }
