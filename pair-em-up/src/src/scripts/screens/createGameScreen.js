@@ -137,31 +137,31 @@ export function createGameScreen({ mode, savedState }) {
     parent: toolsPanelEl,
   });
 
-  const assistsPanelEl = createElement({
-    tag: 'div',
-    classArr: ['game-screen__assists'],
-    parent: screen,
-  });
-
   createElement({
-    tag: 'button',
-    classArr: ['game-screen__assists-btn', 'button'],
-    parent: assistsPanelEl,
+    tag: 'div',
+    classArr: ['game-screen__hints'],
+    parent: screen,
     data: { assist: 'hints' },
     children: [
       createElement({
         tag: 'div',
-        text: 'Hints',
-        classArr: ['game-screen__assists-btn-text'],
+        text: 'Moves Left:',
+        classArr: ['game-screen__hints-text'],
       }),
 
       createElement({
         tag: 'div',
         text: '5+',
         id: 'hints-counter',
-        classArr: ['game-screen__assists-btn-counter'],
+        classArr: ['game-screen__hints-counter'],
       }),
     ],
+  });
+
+  const assistsPanelEl = createElement({
+    tag: 'div',
+    classArr: ['game-screen__assists'],
+    parent: screen,
   });
 
   createElement({
@@ -193,7 +193,7 @@ export function createGameScreen({ mode, savedState }) {
     children: [
       createElement({
         tag: 'div',
-        text: 'Add Numbers',
+        text: 'Add',
         classArr: ['game-screen__assists-btn-text'],
       }),
 
@@ -288,31 +288,27 @@ export function createGameScreen({ mode, savedState }) {
         return;
       }
 
-      const gridCell = target.closest('.grid-game__cell');
+      const gridCell = target.closest('.game-grid__cell');
       if (gridCell) {
-        const number = parseInt(gridCell.dataset.number);
-        const row = parseInt(gridCell.dataset.row);
-        const col = parseInt(gridCell.dataset.col);
-
-        controller.onCellSelect?.({
-          cell: gridCell,
-          number,
-          row,
-          col,
-        });
-        return;
+        const cellData = {
+          element: gridCell,
+          number: parseInt(gridCell.dataset.number),
+          row: parseInt(gridCell.dataset.row),
+          col: parseInt(gridCell.dataset.col),
+        };
+        controller.onCellSelect?.(cellData);
       }
     });
   }
 
-  function generateClassicGrid() {
-    const classicGrid = [
-      [1, 2, 3, 4, 5, 6, 7, 8, 9],
-      [1, 1, 1, 2, 1, 3, 1, 4, 1],
-      [5, 1, 6, 1, 7, 1, 8, 1, 9],
-    ];
+  const classicGrid = [
+    [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    [1, 1, 1, 2, 1, 3, 1, 4, 1],
+    [5, 1, 6, 1, 7, 1, 8, 1, 9],
+  ];
 
-    classicGrid.forEach((row, rowIdx) => {
+  function generateGameGrid(gridMatrix) {
+    gridMatrix.forEach((row, rowIdx) => {
       const rowEl = createElement({
         tag: 'div',
         classArr: ['game-grid__row'],
@@ -334,8 +330,17 @@ export function createGameScreen({ mode, savedState }) {
   function initializeGrid() {
     const gameGridEl = screen.querySelector('#game-grid');
     gameGridEl.textContent = '';
+    console.log('yes', gameState);
+
+    if (savedState) {
+      console.log(savedState)
+      generateGameGrid(savedState);
+      return;
+    }
+
     if (mode === 'classic') {
-      generateClassicGrid();
+      gameState.grid = classicGrid;
+      generateGameGrid(gameState.grid);
     }
   }
 
@@ -348,6 +353,7 @@ export function createGameScreen({ mode, savedState }) {
 
   return {
     element: screen,
+    controller,
     onShow,
     onDestroy,
   };

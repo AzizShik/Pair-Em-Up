@@ -161,6 +161,7 @@ export function createSettingsModal() {
 
   const storage = createStorage();
   let currentSettings = storage.loadSettings();
+  console.log(currentSettings)
 
   function setupEventListeners() {
     const closeBtn = qsElement('#modal-close', modal);

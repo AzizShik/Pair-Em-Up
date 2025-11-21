@@ -4,6 +4,7 @@ import { createStartScreen } from './screens/createStartScreen.js';
 import { createSettingsModal } from './screens/createSetingsModal.js';
 import { createResultsModal } from './screens/createResultsModal.js';
 import { createGameScreen } from './screens/createGamescreen.js';
+import { createGameOutcomeModal } from './screens/createGameOutcomeModal.js';
 
 export function createUI() {
   const screenConstructors = {
@@ -13,6 +14,7 @@ export function createUI() {
 
   const settingsModal = createSettingsModal();
   const resultsModal = createResultsModal();
+  const gameOutcomeModal = createGameOutcomeModal();
 
   function getSettingsModal() {
     return settingsModal;
@@ -20,6 +22,10 @@ export function createUI() {
 
   function getResultsModal() {
     return resultsModal;
+  }
+
+  function getGameOutcomeModal() {
+    return gameOutcomeModal;
   }
 
   function getScreenConstructor(screenName) {
@@ -35,5 +41,6 @@ export function createUI() {
     getAllScreenNames,
     getSettingsModal,
     getResultsModal,
+    getGameOutcomeModal,
   };
 }

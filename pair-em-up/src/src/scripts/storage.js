@@ -1,9 +1,17 @@
-import { gameState } from './gameState.js';
-import { STORAGE_KEY } from './constants.js';
+import { gameState, settings } from './gameState.js';
+import { SETTINGS_STORAGE_KEY, STORAGE_KEY } from './constants.js';
 
 export function createStorage() {
   function loadData() {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || gameState;
+  }
+
+  function loadSettings() {
+    return JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY)) || settings;
+  }
+
+  function saveSettings(settings) {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
   }
 
   function saveData(data) {
@@ -11,16 +19,10 @@ export function createStorage() {
   }
 
   return {
-    loadSettings() {
-      const data = loadData();
-      return data.settings || gameState.settings;
-    },
-
-    saveSettings(settings) {
-      const data = loadData();
-      data.settings = settings;
-      saveData(data);
-    },
+    loadData,
+    saveData,
+    loadSettings,
+    saveSettings,
 
     loadResults() {
       const data = loadData();
@@ -34,6 +36,11 @@ export function createStorage() {
     },
 
     loadCurrentGame() {
+      const data = loadData();
+      return data.currentGame;
+    },
+
+    saveCurrentGame() {
       const data = loadData();
       return data.currentGame;
     },

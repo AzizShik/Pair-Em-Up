@@ -121,6 +121,13 @@ export function createResultsModal() {
         text: result.result,
         parent: row,
       });
+
+      createElement({
+        tag: 'div',
+        classArr: ['results-table__cell'],
+        text: result.moves,
+        parent: row,
+      });
     });
   }
 
@@ -132,6 +139,7 @@ export function createResultsModal() {
 
   function setupEventListeners() {
     const closeBtn = qsElement('#modal-close', modal);
+
     if (closeBtn) closeBtn.addEventListener('click', hide);
 
     overlay.addEventListener('click', hide);

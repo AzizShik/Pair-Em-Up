@@ -76,7 +76,7 @@ export function createStartScreen() {
           'start-screen__controls-btn',
           'button',
           'button--controls',
-          !isSavedGame ? 'button--disabled' : '',
+          ...(!isSavedGame ? ['button--disabled'] : ['']).filter(Boolean),
         ],
         attr: { disabled: !isSavedGame },
         text: 'Continue',
