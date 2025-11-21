@@ -8,6 +8,7 @@ import {
 import { createStorage } from './storage.js';
 import { MAX_LINES, TARGET_SCORE } from './constants.js';
 import { createElement } from './utils/dom.js';
+import { formatTime } from './utils/formatTime.js';
 
 export function createGame(screenManager) {
   const ui = createUI();
@@ -24,7 +25,10 @@ export function createGame(screenManager) {
       if (ctor) screenManager.registerScreen(name, ctor);
     });
 
-    loadGameState(storage.loadData());
+    if (storage.loadSavedGame()) {
+      gameState.savedGame = storage.loadSavedGame();
+    }
+
     applyTheme(currentSettings.theme || 'light');
     setupModals();
     showStartScreen();
@@ -67,8 +71,8 @@ export function createGame(screenManager) {
     };
 
     controller.onContinue = () => {
-      console.log(storage.loadCurrentGame());
-      const savedGame = storage.loadCurrentGame().gameState;
+      const savedGame = storage.loadSavedGame().gameState;
+      loadGameState(savedGame);
 
       if (!savedGame) {
         controller.disableContinue();
@@ -106,8 +110,14 @@ export function createGame(screenManager) {
 
     startGameTimer();
     updateAssistCounters();
-    updateRevertButtonState();
+    updateTimerUI();
+    updateScoreUI();
     updateMovesLeftUI();
+    updateRevertButtonState();
+
+    Object.keys(gameState.assists).forEach(assistId => {
+      updateAssistUI(assistId);
+    });
 
     controller.onCellSelect = cellData => {
       handleCellClick(cellData);
@@ -125,7 +135,7 @@ export function createGame(screenManager) {
       };
 
       const data = storage.loadData();
-      data.currentGame = gameData;
+      data.savedGame = gameData;
       storage.saveData(data);
     };
 
@@ -777,16 +787,23 @@ export function createGame(screenManager) {
   function updateAssistUI(assistId) {
     if (assistId === 'revert' || assistId === 'hints') return;
     let assistInfo;
+    let elementId;
 
     if (assistId === 'add-numbers') {
       assistInfo = gameState.assists['addNumbers'];
+      elementId = assistId;
     } else {
       assistInfo = gameState.assists[assistId];
+      elementId = assistId;
+    }
+
+    if (assistId === 'addNumbers') {
+      elementId = 'add-numbers';
     }
 
     const max = assistInfo.max;
     const left = max - assistInfo.used;
-    const counterElement = document.querySelector(`#${assistId}-counter`);
+    const counterElement = document.querySelector(`#${elementId}-counter`);
     counterElement.textContent = `${left}/${max}`;
   }
 
@@ -845,12 +862,6 @@ export function createGame(screenManager) {
     }
   }
 
-  function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  }
-
   function stopGameTimer() {
     if (gameTimer) {
       clearInterval(gameTimer);
@@ -867,7 +878,6 @@ export function createGame(screenManager) {
   }
 
   function checkLoseCondition() {
-    console.log('yes');
     if (gameState.grid.length >= MAX_LINES) {
       gameState.isGameActive = false;
       stopGameTimer();

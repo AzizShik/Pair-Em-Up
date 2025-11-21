@@ -3,7 +3,7 @@ import { gameState } from '../gameState.js';
 import { STORAGE_KEY } from '../constants.js';
 
 export function createStartScreen() {
-  const isSavedGame = !!gameState.currentGame;
+  const isSavedGame = !!gameState;
 
   const startScreenEl = createElement({
     tag: 'div',
@@ -134,7 +134,7 @@ export function createStartScreen() {
     const continueBtn = qsElement('#controls-continue');
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
 
-    const hasSavedGame = !!saved.currentGame;
+    const hasSavedGame = !!saved.savedGame;
 
     if (!continueBtn) return;
 

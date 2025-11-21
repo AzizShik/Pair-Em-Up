@@ -35,19 +35,14 @@ export function createStorage() {
       saveData(data);
     },
 
-    loadCurrentGame() {
+    loadSavedGame() {
       const data = loadData();
-      return data.currentGame;
-    },
-
-    saveCurrentGame() {
-      const data = loadData();
-      return data.currentGame;
+      return data.savedGame;
     },
 
     clearCurrentGame() {
       const data = loadData();
-      delete data.currentGame;
+      delete data.savedGame;
       saveData(data);
     },
   };

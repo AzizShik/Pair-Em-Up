@@ -2,6 +2,7 @@ import { createElement, qsElement, qsAll } from '../utils/dom.js';
 import { gameState } from '../gameState.js';
 import { TARGET_SCORE, STORAGE_KEY } from '../constants.js';
 import { openModal } from '../utils/modal.js';
+import { formatTime } from '../utils/formatTime.js';
 
 export function createGameScreen({ mode, savedState }) {
   const screen = createElement({
@@ -41,7 +42,7 @@ export function createGameScreen({ mode, savedState }) {
     tag: 'div',
     classArr: ['game-screen__header-timer-display'],
     id: 'timer-display',
-    text: '00:00',
+    text: `00:00`,
     parent: headerTimerEl,
   });
 
@@ -316,13 +317,23 @@ export function createGameScreen({ mode, savedState }) {
       });
 
       row.forEach((number, colIdx) => {
-        const cell = createElement({
-          tag: 'button',
-          classArr: ['game-grid__cell'],
-          text: number.toString(),
-          data: { number: number, row: rowIdx, col: colIdx },
-          parent: rowEl,
-        });
+        if (number === null) {
+          const cell = createElement({
+            tag: 'button',
+            classArr: ['game-grid__cell', 'game-grid__cell--empty'],
+            text: '',
+            data: { number: number, row: rowIdx, col: colIdx },
+            parent: rowEl,
+          });
+        } else {
+          const cell = createElement({
+            tag: 'button',
+            classArr: ['game-grid__cell'],
+            text: number.toString(),
+            data: { number: number, row: rowIdx, col: colIdx },
+            parent: rowEl,
+          });
+        }
       });
     });
   }
@@ -330,11 +341,9 @@ export function createGameScreen({ mode, savedState }) {
   function initializeGrid() {
     const gameGridEl = screen.querySelector('#game-grid');
     gameGridEl.textContent = '';
-    console.log('yes', gameState);
 
     if (savedState) {
-      console.log(savedState)
-      generateGameGrid(savedState);
+      generateGameGrid(savedState.savedState.grid);
       return;
     }
 
