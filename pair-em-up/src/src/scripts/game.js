@@ -9,6 +9,7 @@ import { createStorage } from './storage.js';
 import { MAX_LINES, TARGET_SCORE } from './constants.js';
 import { createElement } from './utils/dom.js';
 import { formatTime } from './utils/formatTime.js';
+import { completeShuffle } from './utils/shuffle.js';
 
 export function createGame(screenManager) {
   const ui = createUI();
@@ -551,9 +552,18 @@ export function createGame(screenManager) {
   }
 
   function addNewLineToGrid() {
-    const matrix = createGridMatrixFromArr(
-      gameState.grid.flat().filter(Boolean)
-    );
+    let matrix = createGridMatrixFromArr(gameState.grid.flat().filter(Boolean));
+
+    if (gameState.mode === 'classic') {
+      matrix = createGridMatrixFromArr(gameState.grid.flat().filter(Boolean));
+    }
+
+    if (gameState.mode === 'random') {
+      const newMatrix = createGridMatrixFromArr(
+        gameState.grid.flat().filter(Boolean)
+      );
+      matrix = completeShuffle(newMatrix);
+    }
 
     const gameGridEl = document.querySelector('#game-grid');
     if (gameGridEl) {
