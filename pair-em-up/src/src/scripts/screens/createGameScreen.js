@@ -4,6 +4,7 @@ import { TARGET_SCORE, STORAGE_KEY } from '../constants.js';
 import { openModal } from '../utils/modal.js';
 import { formatTime } from '../utils/formatTime.js';
 import { completeShuffle } from '../utils/shuffle.js';
+import { createChaoticGrid } from '../utils/random.js';
 
 export function createGameScreen({ mode, savedState }) {
   const screen = createElement({
@@ -355,6 +356,11 @@ export function createGameScreen({ mode, savedState }) {
 
     if (mode === 'random') {
       gameState.grid = completeShuffle(classicGrid);
+      generateGameGrid(gameState.grid);
+    }
+
+    if (mode === 'chaotic') {
+      gameState.grid = createChaoticGrid(27);
       generateGameGrid(gameState.grid);
     }
   }

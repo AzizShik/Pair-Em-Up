@@ -10,6 +10,7 @@ import { MAX_LINES, TARGET_SCORE } from './constants.js';
 import { createElement } from './utils/dom.js';
 import { formatTime } from './utils/formatTime.js';
 import { completeShuffle } from './utils/shuffle.js';
+import { createChaoticGrid } from './utils/random.js';
 
 export function createGame(screenManager) {
   const ui = createUI();
@@ -563,6 +564,11 @@ export function createGame(screenManager) {
         gameState.grid.flat().filter(Boolean)
       );
       matrix = completeShuffle(newMatrix);
+    }
+
+    if (gameState.mode === 'chaotic') {
+      const flatArr = gameState.grid.flat().filter(Boolean);
+      matrix = createChaoticGrid(flatArr.length);
     }
 
     const gameGridEl = document.querySelector('#game-grid');
