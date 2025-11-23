@@ -3,6 +3,7 @@ import { gameState } from '../gameState.js';
 import { TARGET_SCORE, STORAGE_KEY } from '../constants.js';
 import { openModal } from '../utils/modal.js';
 import { formatTime } from '../utils/formatTime.js';
+import { completeShuffle } from '../utils/shuffle.js';
 
 export function createGameScreen({ mode, savedState }) {
   const screen = createElement({
@@ -349,6 +350,11 @@ export function createGameScreen({ mode, savedState }) {
 
     if (mode === 'classic') {
       gameState.grid = classicGrid;
+      generateGameGrid(gameState.grid);
+    }
+
+    if (mode === 'random') {
+      gameState.grid = completeShuffle(classicGrid);
       generateGameGrid(gameState.grid);
     }
   }
