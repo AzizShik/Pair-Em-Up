@@ -91,6 +91,7 @@ export function createGame(screenManager) {
 
     controller.onResults = () => {
       const results = storage.loadResults();
+      console.log(results);
       const modal = ui.getResultsModal();
       if (modal.render) {
         const top5 = results.sort((a, b) => a.timeSec - b.timeSec).slice(0, 5);
@@ -890,6 +891,15 @@ export function createGame(screenManager) {
       gameState.isGameActive = false;
       stopGameTimer();
       showGameOutcomeModal('Win');
+      const resultsObj = {
+        mode: gameState.mode,
+        score: gameState.score,
+        time: formatTime(gameState.elapsedTime),
+        moves: gameState.moveHistory.length,
+        result: 'Win',
+      };
+
+      saveGameResults(resultsObj);
     }
   }
 
@@ -898,7 +908,34 @@ export function createGame(screenManager) {
       gameState.isGameActive = false;
       stopGameTimer();
       showGameOutcomeModal('Lose');
+
+      const resultsObj = {
+        mode: gameState.mode,
+        score: gameState.score,
+        time: formatTime(gameState.elapsedTime),
+        moves: gameState.moveHistory.length,
+        result: 'Lose',
+      };
+
+      saveGameResults(resultsObj);
     }
+  }
+
+  function saveGameResults(results) {
+    const storagedArr = storage.loadResults();
+    let pastResultsArr = [];
+
+    if (storagedArr.length) {
+      pastResultsArr.push(...storagedArr);
+    }
+
+    if (pastResultsArr.length >= 5) {
+      pastResultsArr = pastResultsArr.slice(-4);
+    }
+
+    pastResultsArr.push(results);
+
+    storage.saveResults(pastResultsArr);
   }
 
   function showGameOutcomeModal(outcome) {

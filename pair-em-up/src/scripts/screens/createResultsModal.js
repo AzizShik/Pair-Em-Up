@@ -51,7 +51,7 @@ export function createResultsModal() {
     parent: settingsContainer,
   });
 
-  const resultsTableHeaderTitles = ['Mode', 'Score', 'Time', 'Results'];
+  const resultsTableHeaderTitles = ['Mode', 'Score', 'Time', 'Moves', 'Result'];
 
   const resultsTableHeader = createElement({
     tag: 'div',
@@ -118,14 +118,14 @@ export function createResultsModal() {
       createElement({
         tag: 'div',
         classArr: ['results-table__cell'],
-        text: result.result,
+        text: result.moves,
         parent: row,
       });
 
       createElement({
         tag: 'div',
         classArr: ['results-table__cell'],
-        text: result.moves,
+        text: result.result,
         parent: row,
       });
     });

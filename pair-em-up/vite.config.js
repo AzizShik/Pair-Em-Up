@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   return {
     root: resolve(__dirname, 'src'),
     publicDir: resolve(__dirname, 'src/public'),
-    base: mode === 'production' ? '/azizshik-JSFE2025Q3/virtual-music-kit/' : '/',
+    base: mode === 'production' ? '/azizshik-JSFE2025Q3/pair-em-up/' : '/',
     // base: '/',
     server: {
       port: 8080,
@@ -23,26 +23,9 @@ export default defineConfig(({ mode }) => {
         scss: {},
       },
     },
-    plugins: [
-      // viteStaticCopy({
-      //   targets: [
-      //     {
-      //       src: 'src/assets/notes/*.mp3',
-      //       dest: 'assets/notes',
-      //     },
-      //     // {
-      //     //   src: 'src/static/*.json',
-      //     //   dest: 'data',
-      //     // },
-      //   ],
-      //   structured: true,
-      //   watch: {
-      //     reloadPageOnChange: true,
-      //   },
-      // }),
-    ],
+    plugins: [],
     build: {
-      outDir: resolve(__dirname, 'dist/virtual-music-kit/'),
+      outDir: resolve(__dirname, 'dist/pair-em-up/'),
       emptyOutDir: true,
       minify: false,
       cssMinify: false,
