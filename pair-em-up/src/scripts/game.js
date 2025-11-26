@@ -806,9 +806,16 @@ export function createGame(screenManager) {
     let assistInfo;
     let elementId;
 
+    const addNumbersMaxLineEl = document.getElementById(
+      'add-numbers-max-lines'
+    );
+
+    console.log(assistId);
+
     if (assistId === 'add-numbers') {
       assistInfo = gameState.assists['addNumbers'];
       elementId = assistId;
+      addNumbersMaxLineEl.textContent = `${gameState.grid.length}/${MAX_LINES}`;
     } else {
       assistInfo = gameState.assists[assistId];
       elementId = assistId;

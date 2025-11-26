@@ -1,6 +1,6 @@
 import { createElement, qsElement, qsAll } from '../utils/dom.js';
 import { gameState } from '../gameState.js';
-import { TARGET_SCORE, STORAGE_KEY } from '../constants.js';
+import { TARGET_SCORE, STORAGE_KEY, MAX_LINES } from '../constants.js';
 import { openModal } from '../utils/modal.js';
 import { formatTime } from '../utils/formatTime.js';
 import { completeShuffle } from '../utils/shuffle.js';
@@ -204,6 +204,13 @@ export function createGameScreen({ mode, savedState }) {
         tag: 'div',
         text: '10/10',
         id: 'add-numbers-counter',
+        classArr: ['game-screen__assists-btn-counter'],
+      }),
+
+      createElement({
+        tag: 'div',
+        text: `3/${MAX_LINES}`,
+        id: 'add-numbers-max-lines',
         classArr: ['game-screen__assists-btn-counter'],
       }),
     ],
