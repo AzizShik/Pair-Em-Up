@@ -44,21 +44,34 @@ export function createGame(screenManager) {
   function setupModals() {
     const settingsModal = ui.getSettingsModal();
     if (settingsModal.controller) {
-      settingsModal.controller.onThemeChange = theme => {
+      settingsModal.controller.onThemeChange = (
+        theme,
+        playSoundFlag = true
+      ) => {
         currentSettings.theme = theme;
         applyTheme(theme);
         storage.saveSettings(currentSettings);
-        playSound('select');
+
+        if (playSoundFlag) {
+          playSound('select');
+        }
       };
-      settingsModal.controller.onAudioToggle = enabled => {
+      settingsModal.controller.onAudioToggle = (
+        enabled,
+        playSoundFlag = true
+      ) => {
         currentSettings.isAudioEnabled = enabled;
         storage.saveSettings(currentSettings);
-        playSound('select');
+
+        if (playSoundFlag) {
+          playSound('select');
+        }
       };
       settingsModal.controller.onReset = () => {
         currentSettings = { theme: 'light', isAudioEnabled: true };
-        applyTheme('light');
         storage.saveSettings(currentSettings);
+        applyTheme('light');
+        playSound('select');
       };
     }
   }

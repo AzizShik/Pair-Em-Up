@@ -217,9 +217,9 @@ export function createSettingsModal() {
     updateUI();
 
     if (controller.onAudioToggle)
-      controller.onAudioToggle(currentSettings.isAudioEnabled);
+      controller.onAudioToggle(currentSettings.isAudioEnabled, false);
     if (controller.onThemeChange)
-      controller.onThemeChange(currentSettings.theme);
+      controller.onThemeChange(currentSettings.theme, false);
   }
 
   function updateUI() {
