@@ -125,9 +125,10 @@ export function createStartScreen() {
       .addEventListener('click', () => controller.onResults?.());
   }
 
+  setupEventListeners();
+
   function onShow() {
     updateContinueButton();
-    setupEventListeners();
   }
 
   function updateContinueButton() {

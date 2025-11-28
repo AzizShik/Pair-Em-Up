@@ -372,8 +372,9 @@ export function createGameScreen({ mode, savedState }) {
     }
   }
 
+  setupEventListeners();
+
   function onShow() {
-    setupEventListeners();
     initializeGrid();
   }
 

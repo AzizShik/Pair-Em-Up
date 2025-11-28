@@ -1,3 +1,5 @@
+import { playSound } from '../audio';
+
 let currentModal = null;
 
 export function openModal(modalElement) {
@@ -8,6 +10,7 @@ export function openModal(modalElement) {
   modalElement.classList.add('modal--active');
   document.body.style.overflow = 'hidden';
   currentModal = modalElement;
+  playSound('select');
 }
 
 export function closeCurrentModal() {
@@ -20,4 +23,5 @@ export function closeCurrentModal() {
     }
     currentModal = null;
   }, 300);
+  playSound('select');
 }

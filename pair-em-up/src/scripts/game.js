@@ -11,6 +11,7 @@ import { createElement } from './utils/dom.js';
 import { formatTime } from './utils/formatTime.js';
 import { completeShuffle } from './utils/shuffle.js';
 import { createChaoticGrid } from './utils/random.js';
+import { playSound } from './audio.js';
 
 export function createGame(screenManager) {
   const ui = createUI();
@@ -47,13 +48,15 @@ export function createGame(screenManager) {
         currentSettings.theme = theme;
         applyTheme(theme);
         storage.saveSettings(currentSettings);
+        playSound('select');
       };
       settingsModal.controller.onAudioToggle = enabled => {
-        currentSettings.audioEnabled = enabled;
+        currentSettings.isAudioEnabled = enabled;
         storage.saveSettings(currentSettings);
+        playSound('select');
       };
       settingsModal.controller.onReset = () => {
-        currentSettings = { theme: 'light', audioEnabled: true };
+        currentSettings = { theme: 'light', isAudioEnabled: true };
         applyTheme('light');
         storage.saveSettings(currentSettings);
       };
@@ -70,6 +73,7 @@ export function createGame(screenManager) {
       gameState.mode = mode;
       resetGameState();
       showGameScreen(mode);
+      playSound('select');
     };
 
     controller.onContinue = () => {
@@ -85,13 +89,15 @@ export function createGame(screenManager) {
         mode: savedGame.mode,
         savedState: savedGame,
       });
+      playSound('select');
     };
 
-    controller.onSettings = () => ui.getSettingsModal().controller.show();
+    controller.onSettings = () => {
+      ui.getSettingsModal().controller.show();
+    };
 
     controller.onResults = () => {
       const results = storage.loadResults();
-      console.log(results);
       const modal = ui.getResultsModal();
       if (modal.render) {
         const top5 = results.sort((a, b) => a.timeSec - b.timeSec).slice(0, 5);
@@ -129,6 +135,7 @@ export function createGame(screenManager) {
     controller.onReset = () => {
       resetGameState();
       showGameScreen(gameState.mode);
+      playSound('select');
     };
 
     controller.onSave = () => {
@@ -140,6 +147,7 @@ export function createGame(screenManager) {
       const data = storage.loadData();
       data.savedGame = gameData;
       storage.saveData(data);
+      playSound('select');
     };
 
     controller.onSettings = () => {
@@ -149,10 +157,12 @@ export function createGame(screenManager) {
     controller.onMainMenu = () => {
       stopGameTimer();
       showStartScreen();
+      playSound('select');
     };
 
     controller.onAssistUse = assistId => {
       handleAssistUse(assistId);
+      playSound('assist');
     };
   }
 
@@ -168,6 +178,10 @@ export function createGame(screenManager) {
     const { element, number, row, col } = cellData;
 
     toggleCellSelection(element, number, row, col);
+
+    if (gameState.selectedCells.length < 2) {
+      playSound('select');
+    }
 
     if (gameState.selectedCells.length === 2) {
       checkSelectedPair();
@@ -208,10 +222,12 @@ export function createGame(screenManager) {
       }, cellClassTimeout);
 
       updateScoreGameState(cell1, cell2);
+      playSound('valid');
       checkWinCondition();
       updateScoreUI();
       updateMovesLeftUI();
     } else {
+      playSound('invalid');
       applyValidationClasses([cell1, cell2], 'invalid');
       setTimeout(() => {
         clearSelection();
@@ -810,8 +826,6 @@ export function createGame(screenManager) {
       'add-numbers-max-lines'
     );
 
-    console.log(assistId);
-
     if (assistId === 'add-numbers') {
       assistInfo = gameState.assists['addNumbers'];
       elementId = assistId;
@@ -898,6 +912,7 @@ export function createGame(screenManager) {
       gameState.isGameActive = false;
       stopGameTimer();
       showGameOutcomeModal('Win');
+      playSound('win');
       const resultsObj = {
         mode: gameState.mode,
         score: gameState.score,
@@ -915,6 +930,7 @@ export function createGame(screenManager) {
       gameState.isGameActive = false;
       stopGameTimer();
       showGameOutcomeModal('Lose');
+      playSound('lose');
 
       const resultsObj = {
         mode: gameState.mode,

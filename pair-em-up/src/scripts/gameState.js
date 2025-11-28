@@ -22,7 +22,7 @@ export const gameState = {
 
 export const settings = {
   theme: 'light',
-  audioEnabled: true,
+  isAudioEnabled: true,
 };
 
 export function resetGameState() {

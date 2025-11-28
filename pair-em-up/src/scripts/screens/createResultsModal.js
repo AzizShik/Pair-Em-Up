@@ -1,6 +1,5 @@
 import { createElement, qsElement } from '../utils/dom.js';
 import { openModal, closeCurrentModal } from '../utils/modal.js';
-import { STORAGE_KEY } from '../constants.js';
 
 export function createResultsModal() {
   const modal = createElement({
@@ -20,7 +19,7 @@ export function createResultsModal() {
     parent: modal,
   });
 
-  const header = createElement({
+  createElement({
     tag: 'div',
     classArr: ['modal__header'],
     parent: content,
@@ -145,9 +144,10 @@ export function createResultsModal() {
     overlay.addEventListener('click', hide);
   }
 
+  setupEventListeners();
+
   function show() {
     openModal(modal);
-    setupEventListeners();
   }
 
   function hide() {

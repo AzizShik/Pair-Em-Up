@@ -161,12 +161,13 @@ export function createGameOutcomeModal() {
     });
   }
 
+  setupEventListeners();
+
   function show(outcomeData = {}) {
     openModal(modal);
     if (outcomeData) {
       setOutcome(outcomeData);
     }
-    setupEventListeners();
   }
 
   function hide() {

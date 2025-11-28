@@ -178,7 +178,7 @@ export function createSettingsModal() {
     const audioCheckbox = qsElement('#audio-toggle', modal);
     if (audioCheckbox)
       audioCheckbox.addEventListener('change', e => {
-        currentSettings.audioEnabled = e.target.checked;
+        currentSettings.isAudioEnabled = e.target.checked;
         if (controller.onAudioToggle)
           controller.onAudioToggle(e.target.checked);
       });
@@ -192,10 +192,11 @@ export function createSettingsModal() {
     });
   }
 
+  setupEventListeners();
+
   function show() {
     openModal(modal);
     updateUI?.();
-    setupEventListeners();
   }
 
   function hide() {
@@ -212,18 +213,18 @@ export function createSettingsModal() {
   }
 
   function resetToDefaults() {
-    currentSettings = { audioEnabled: true, theme: 'light' };
+    currentSettings = { isAudioEnabled: true, theme: 'light' };
     updateUI();
 
     if (controller.onAudioToggle)
-      controller.onAudioToggle(currentSettings.audioEnabled);
+      controller.onAudioToggle(currentSettings.isAudioEnabled);
     if (controller.onThemeChange)
       controller.onThemeChange(currentSettings.theme);
   }
 
   function updateUI() {
     const audioCheckbox = qsElement('#audio-toggle', modal);
-    if (audioCheckbox) audioCheckbox.checked = !!currentSettings.audioEnabled;
+    if (audioCheckbox) audioCheckbox.checked = !!currentSettings.isAudioEnabled;
 
     const themeRadio = modal.querySelector(`#theme-${currentSettings.theme}`);
     if (themeRadio) themeRadio.checked = true;
