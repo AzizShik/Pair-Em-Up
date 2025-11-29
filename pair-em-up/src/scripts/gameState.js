@@ -45,7 +45,6 @@ export function getSaveData() {
     grid: JSON.parse(JSON.stringify(gameState.grid)),
     score: gameState.score,
     elapsedTime: gameState.elapsedTime,
-    selectedCells: JSON.parse(JSON.stringify(gameState.selectedCells)),
     isGameActive: gameState.isGameActive,
     assists: JSON.parse(JSON.stringify(gameState.assists)),
     moveHistory: JSON.parse(JSON.stringify(gameState.moveHistory)),

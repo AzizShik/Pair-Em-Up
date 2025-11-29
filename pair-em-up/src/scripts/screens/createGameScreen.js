@@ -334,6 +334,14 @@ export function createGameScreen({ mode, savedState }) {
             data: { number: number, row: rowIdx, col: colIdx },
             parent: rowEl,
           });
+        } else if (number === 0) {
+          const cell = createElement({
+            tag: 'button',
+            classArr: ['game-grid__cell', 'game-grid__cell--blank'],
+            text: '',
+            data: { number: number, row: rowIdx, col: colIdx },
+            parent: rowEl,
+          });
         } else {
           const cell = createElement({
             tag: 'button',

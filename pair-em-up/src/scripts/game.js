@@ -148,18 +148,12 @@ export function createGame(screenManager) {
     controller.onReset = () => {
       resetGameState();
       showGameScreen(gameState.mode);
+      saveCurrentGame();
       playSound('select');
     };
 
     controller.onSave = () => {
-      const gameData = {
-        gameState: getSaveData(),
-        timestamp: Date.now(),
-      };
-
-      const data = storage.loadData();
-      data.savedGame = gameData;
-      storage.saveData(data);
+      saveCurrentGame();
       playSound('select');
     };
 
@@ -170,13 +164,26 @@ export function createGame(screenManager) {
     controller.onMainMenu = () => {
       stopGameTimer();
       showStartScreen();
+      saveCurrentGame();
       playSound('select');
     };
 
     controller.onAssistUse = assistId => {
       handleAssistUse(assistId);
+      saveCurrentGame();
       playSound('assist');
     };
+  }
+
+  function saveCurrentGame() {
+    const gameData = {
+      gameState: getSaveData(),
+      timestamp: Date.now(),
+    };
+
+    const data = storage.loadData();
+    data.savedGame = gameData;
+    storage.saveData(data);
   }
 
   function updateMovesLeftUI() {
@@ -235,6 +242,7 @@ export function createGame(screenManager) {
       }, cellClassTimeout);
 
       updateScoreGameState(cell1, cell2);
+      saveCurrentGame();
       playSound('valid');
       checkWinCondition();
       updateScoreUI();
@@ -583,44 +591,37 @@ export function createGame(screenManager) {
   }
 
   function addNewLineToGrid() {
-    let matrix = createGridMatrixFromArr(gameState.grid.flat().filter(Boolean));
+    let gameGridFlat = gameState.grid.flat();
 
-    if (gameState.mode === 'classic') {
-      matrix = createGridMatrixFromArr(gameState.grid.flat().filter(Boolean));
-    }
-
-    if (gameState.mode === 'random') {
-      const newMatrix = createGridMatrixFromArr(
-        gameState.grid.flat().filter(Boolean)
-      );
-      matrix = completeShuffle(newMatrix);
-    }
-
-    if (gameState.mode === 'chaotic') {
-      const flatArr = gameState.grid.flat().filter(Boolean);
-      matrix = createChaoticGrid(flatArr.length);
-    }
+    let matrix = createGridMatrixFromArr(gameGridFlat.filter(Boolean));
 
     const gameGridEl = document.querySelector('#game-grid');
     if (gameGridEl) {
       renderNewLine(matrix, gameState.grid.length - 1, gameGridEl);
     }
 
-    matrix.forEach(arr => {
-      gameState.grid.push(arr.filter(Boolean));
-    });
+    if (gameGridFlat.includes(0)) {
+      gameState.grid = createGridMatrixFromArr(
+        gameGridFlat
+          .filter(number => number !== 0)
+          .concat(gameGridFlat.filter(Boolean))
+      );
+    } else {
+      matrix.forEach(arr => {
+        gameState.grid.push(arr);
+      });
+    }
   }
 
   function createGridMatrixFromArr(arr) {
-    const newArr = arr.filter(Boolean);
     const matrix = [];
 
-    while (newArr.length % 9 !== 0) {
-      newArr.push(0);
+    while (arr.length % 9 !== 0) {
+      arr.push(0);
     }
 
-    for (let i = 0; i < newArr.length; i += 9) {
-      matrix.push(newArr.slice(i, i + 9));
+    for (let i = 0; i < arr.length; i += 9) {
+      matrix.push(arr.slice(i, i + 9));
     }
 
     return matrix;
@@ -639,7 +640,9 @@ export function createGame(screenManager) {
         item.classList.remove('game-grid__cell--blank');
       });
 
-      gridMatrix = createGridMatrixFromArr(arr.slice(blankEls.length));
+      gridMatrix = createGridMatrixFromArr(
+        arr.slice(blankEls.length).filter(Boolean)
+      );
     } else {
       gridMatrix = matrix;
     }
@@ -850,6 +853,7 @@ export function createGame(screenManager) {
 
     if (assistId === 'addNumbers') {
       elementId = 'add-numbers';
+      addNumbersMaxLineEl.textContent = `${gameState.grid.length}/${MAX_LINES}`;
     }
 
     const max = assistInfo.max;
