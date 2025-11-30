@@ -6,7 +6,7 @@ import {
   resetGameState,
 } from './gameState.js';
 import { createStorage } from './storage.js';
-import { MAX_LINES, TARGET_SCORE } from './constants.js';
+import { GRID_COLS, MAX_LINES, TARGET_SCORE } from './constants.js';
 import { createElement } from './utils/dom.js';
 import { formatTime } from './utils/formatTime.js';
 import { completeShuffle } from './utils/shuffle.js';
@@ -354,8 +354,14 @@ export function createGame(screenManager) {
       return isVerticalPathClear(col1, row1, row2);
     }
 
-    if (areRowBoundaryCells(row1, col1, row2, col2)) {
-      return isRowBoundaryPathClear(row1, col1, row2, col2);
+    if (
+      areRowBoundaryCells(row1, col1, row2, col2) ||
+      areRowBoundaryCells(row2, col2, row1, col1)
+    ) {
+      return (
+        isRowBoundaryPathClear(row1, col1, row2, col2) ||
+        isRowBoundaryPathClear(row2, col2, row1, col1)
+      );
     }
 
     return false;
@@ -595,19 +601,33 @@ export function createGame(screenManager) {
 
     let matrix = createGridMatrixFromArr(gameGridFlat.filter(Boolean));
 
+    // console.log(matrix)
+
     const gameGridEl = document.querySelector('#game-grid');
     if (gameGridEl) {
-      renderNewLine(matrix, gameState.grid.length - 1, gameGridEl);
+      renderNewMatrix(matrix, gameState.grid.length - 1, gameGridEl);
     }
 
-    if (gameGridFlat.includes(0)) {
-      gameState.grid = createGridMatrixFromArr(
-        gameGridFlat
-          .filter(number => number !== 0)
-          .concat(gameGridFlat.filter(Boolean))
-      );
-    } else {
+    const isMatrixFull = matrix.every(row => row.length === GRID_COLS);
+    const isGameStateGridFull = gameState.grid.every(
+      row => row.length === GRID_COLS
+    );
+
+    if (isMatrixFull || isGameStateGridFull) {
       matrix.forEach(arr => {
+        gameState.grid.push(arr);
+      });
+    } else {
+      const lastGridArr = gameState.grid[gameState.grid.length - 1];
+      const cellLeftToFullRow = GRID_COLS - lastGridArr.length;
+      const leftToFillLastRowArr = matrix.flat().slice(0, cellLeftToFullRow);
+      const newMatrix = createGridMatrixFromArr(
+        matrix.flat().slice(cellLeftToFullRow)
+      );
+      leftToFillLastRowArr.forEach(number => {
+        gameState.grid[gameState.grid.length - 1].push(number);
+      });
+      newMatrix.forEach(arr => {
         gameState.grid.push(arr);
       });
     }
@@ -616,10 +636,6 @@ export function createGame(screenManager) {
   function createGridMatrixFromArr(arr) {
     const matrix = [];
 
-    while (arr.length % 9 !== 0) {
-      arr.push(0);
-    }
-
     for (let i = 0; i < arr.length; i += 9) {
       matrix.push(arr.slice(i, i + 9));
     }
@@ -627,50 +643,56 @@ export function createGame(screenManager) {
     return matrix;
   }
 
-  function renderNewLine(matrix, rowIndex, gridElement) {
-    let gridMatrix;
-    const blankEls = document.querySelectorAll('.game-grid__cell--blank');
+  function renderNewMatrix(matrix, rowIndex, gridElement) {
+    const isGameStateGridFull = gameState.grid.every(
+      row => row.length === GRID_COLS
+    );
 
-    if (blankEls.length) {
-      const arr = matrix.flat();
-      const blankArr = arr.slice(0, blankEls.length);
+    if (isGameStateGridFull) {
+      renderFromNewLine(matrix, rowIndex, gridElement);
+    } else {
+      const lastdRowEl = gridElement.querySelector(
+        '.game-grid__row:last-child'
+      );
+      const lastdRowCellsAmount =
+        lastdRowEl.querySelectorAll('.game-grid__cell').length;
+      const emptyCellsAmount = GRID_COLS - lastdRowCellsAmount;
+      const fillEmptyArr = matrix.flat().slice(0, emptyCellsAmount);
+      const newMatrix = createGridMatrixFromArr(
+        matrix.flat().slice(emptyCellsAmount)
+      );
+      fillEmptyArr.forEach((number, idx) => {
+        const colIndex = lastdRowCellsAmount + idx + 1;
+        const cell = createElement({
+          tag: 'button',
+          text: number,
+          data: { number: number, row: rowIndex, col: colIndex },
+          classArr: ['game-grid__cell'],
+        });
 
-      blankEls.forEach((item, idx) => {
-        item.textContent = blankArr[idx];
-        item.classList.remove('game-grid__cell--blank');
+        lastdRowEl.appendChild(cell);
+      });
+      renderFromNewLine(newMatrix, rowIndex, gridElement);
+    }
+  }
+
+  function renderFromNewLine(matrix, rowIndex, gridElement) {
+    matrix.forEach((row, idx) => {
+      const rowEl = createElement({
+        tag: 'div',
+        classArr: ['game-grid__row'],
       });
 
-      gridMatrix = createGridMatrixFromArr(
-        arr.slice(blankEls.length).filter(Boolean)
-      );
-    } else {
-      gridMatrix = matrix;
-    }
-
-    gridMatrix.forEach((row, idx) => {
-      const rowEl = createElement({ tag: 'div', classArr: ['game-grid__row'] });
-
-      const newIdx = idx + rowIndex + 1;
+      const newRowIdx = idx + rowIndex + 1;
       row.forEach((number, colIndex) => {
-        if (number === 0) {
-          const cell = createElement({
-            tag: 'button',
-            text: '',
-            data: { number: number, row: newIdx, col: colIndex },
-            classArr: ['game-grid__cell', 'game-grid__cell--blank'],
-          });
+        const cell = createElement({
+          tag: 'button',
+          text: number,
+          data: { number: number, row: newRowIdx, col: colIndex },
+          classArr: ['game-grid__cell'],
+        });
 
-          rowEl.appendChild(cell);
-        } else {
-          const cell = createElement({
-            tag: 'button',
-            text: number,
-            data: { number: number, row: newIdx, col: colIndex },
-            classArr: ['game-grid__cell'],
-          });
-
-          rowEl.appendChild(cell);
-        }
+        rowEl.appendChild(cell);
       });
 
       gridElement.appendChild(rowEl);

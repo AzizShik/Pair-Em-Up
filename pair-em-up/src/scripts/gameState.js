@@ -47,7 +47,6 @@ export function getSaveData() {
     elapsedTime: gameState.elapsedTime,
     isGameActive: gameState.isGameActive,
     assists: JSON.parse(JSON.stringify(gameState.assists)),
-    moveHistory: JSON.parse(JSON.stringify(gameState.moveHistory)),
   };
 }
 
