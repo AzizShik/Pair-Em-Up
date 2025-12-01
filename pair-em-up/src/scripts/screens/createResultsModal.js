@@ -32,8 +32,11 @@ export function createResultsModal() {
       createElement({
         tag: 'button',
         classArr: ['modal__close-btn'],
-        text: 'x',
         id: 'modal-close',
+        children: [
+          createElement({ tag: 'span', classArr: ['modal__close-btn__span'] }),
+          createElement({ tag: 'span', classArr: ['modal__close-btn__span'] }),
+        ],
       }),
     ],
   });

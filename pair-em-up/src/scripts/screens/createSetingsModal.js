@@ -33,8 +33,11 @@ export function createSettingsModal() {
       createElement({
         tag: 'button',
         classArr: ['modal__close-btn'],
-        text: 'x',
         id: 'modal-close',
+        children: [
+          createElement({ tag: 'span', classArr: ['modal__close-btn__span'] }),
+          createElement({ tag: 'span', classArr: ['modal__close-btn__span'] }),
+        ],
       }),
     ],
   });
@@ -74,6 +77,7 @@ export function createSettingsModal() {
         children: [
           createElement({
             tag: 'input',
+            classArr: ['settings-toggle__switch-input'],
             id: 'audio-toggle',
             attr: { type: 'checkbox' },
           }),

@@ -26,6 +26,9 @@
     background-color: #ccc;
     transition: 0.4s;
     border-radius: 24px;
+    box-shadow:
+      0 1px 2px var(--box-shadow-first-color),
+      0 1px 2px var(--box-shadow-second-color);
 
     &::before {
       position: absolute;
@@ -52,7 +55,7 @@
     width: 50px;
     height: 24px;
 
-    input {
+    &-input {
       opacity: 0;
       width: 0;
       height: 0;
@@ -87,6 +90,9 @@
     padding: 16px 12px;
     border: 2px solid var(--border-color);
     border-radius: 8px;
+    box-shadow:
+      0 1px 2px var(--box-shadow-first-color),
+      0 1px 2px var(--box-shadow-second-color);
     transition: all 0.3s ease;
     text-align: center;
 

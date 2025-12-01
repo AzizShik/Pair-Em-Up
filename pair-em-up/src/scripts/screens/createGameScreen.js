@@ -15,7 +15,7 @@ export function createGameScreen({ mode, savedState }) {
   const modeTitle = `${mode.charAt(0).toUpperCase()}${mode.slice(1)} Mode`;
 
   const gameHeader = createElement({
-    tag: 'game-screen__header',
+    tag: 'div',
     classArr: ['game-screen__header'],
     parent: screen,
   });
@@ -27,10 +27,16 @@ export function createGameScreen({ mode, savedState }) {
     parent: gameHeader,
   });
 
+  const headerGameStats = createElement({
+    tag: 'div',
+    classArr: ['game-screen__header-game-stats'],
+    parent: gameHeader,
+  });
+
   const headerTimerEl = createElement({
     tag: 'div',
     classArr: ['game-screen__header-timer'],
-    parent: gameHeader,
+    parent: headerGameStats,
   });
 
   createElement({
@@ -51,7 +57,7 @@ export function createGameScreen({ mode, savedState }) {
   const headerScoreEl = createElement({
     tag: 'div',
     classArr: ['game-screen__header-score'],
-    parent: gameHeader,
+    parent: headerGameStats,
   });
 
   createElement({

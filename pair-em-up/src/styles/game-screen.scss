@@ -2,8 +2,8 @@
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
-  align-self: flex-start;
-  padding: 20px;
+  align-self: center;
+  padding: clamp(0.625rem, 0.361rem + 1.11vw, 1.25rem);
   color: var(--color-text);
   background: var(--color-card);
   border-radius: var(--card-border-radius);
@@ -18,37 +18,41 @@
     border-bottom: 1px solid var(--border-color);
 
     &-mode {
-      font-size: 32px;
+      width: 50%;
+      font-size: clamp(1.75rem, 1.644rem + 0.44vw, 2rem);
       font-weight: 700;
       color: var(--color-accent);
     }
 
-    &-timer {
-      text-align: center;
+    &-game-stats {
+      width: 50%;
+      display: flex;
+      justify-content: space-between;
+    }
 
+    &-timer {
       &-text {
-        font-size: 24px;
+        font-size: clamp(1.375rem, 1.322rem + 0.22vw, 1.5rem);
         font-weight: 400;
         color: var(--color-text);
         margin-bottom: 5px;
       }
 
       &-display {
-        font-size: 32px;
+        font-size: clamp(1.75rem, 1.644rem + 0.44vw, 2rem);
         color: var(--color-timer);
       }
     }
 
     &-score {
-      text-align: center;
-
       &-text {
-        font-size: 24px;
+        text-align: right;
+        font-size: clamp(1.375rem, 1.322rem + 0.22vw, 1.5rem);
         margin-bottom: 5px;
       }
 
       &-display {
-        font-size: 32px;
+        font-size: clamp(1.75rem, 1.644rem + 0.44vw, 2rem);
         color: var(--color-score);
       }
     }
@@ -93,13 +97,13 @@
     &__row {
       display: grid;
       grid-template-columns: repeat(9, 1fr);
-      min-height: 40px;
+      min-height: clamp(2rem, 1.789rem + 0.89vw, 2.5rem);
       gap: 2px;
     }
 
     &__cell {
-      font-size: 24px;
-      padding: 5px;
+      font-size: clamp(1.125rem, 0.967rem + 0.67vw, 1.5rem);
+      padding: clamp(0.188rem, 0.135rem + 0.22vw, 0.313rem);
       border-radius: var(--cell-border-radius);
       background: var(--color-cell-number);
       color: var(--color-text);
@@ -140,7 +144,7 @@
 
     &-btn {
       font-size: 16px;
-      padding: 10px;
+      padding: clamp(0.313rem, 0.181rem + 0.56vw, 0.625rem);
     }
   }
 
@@ -179,6 +183,42 @@
       &-counter {
         font-size: 18px;
       }
+    }
+  }
+}
+
+@media (width <= 767px) {
+  .game-screen {
+    &__header {
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+
+      &-mode {
+        width: 100%;
+        text-align: center;
+      }
+
+      &-game-stats {
+        width: 100%;
+      }
+    }
+
+    &__progress-bar {
+      margin-bottom: 15px;
+    }
+
+    &__tools {
+      grid-template-columns: repeat(2, 1fr);
+      margin-bottom: 15px;
+    }
+
+    &__assists {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .game-grid {
+      margin-bottom: 15px;
     }
   }
 }
