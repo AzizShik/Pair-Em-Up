@@ -75,6 +75,48 @@ function createElement(options) {
 function qsElement(selector, root = document) {
   return root.querySelector(selector);
 }
+function createScreenManager(appElement) {
+  let currentScreen = null;
+  const screenConstructors = /* @__PURE__ */ new Map();
+  function registerScreen(name, constructor) {
+    screenConstructors.set(name, constructor);
+  }
+  function showScreen(name, data = {}) {
+    if (currentScreen) {
+      currentScreen.element.remove();
+      if (currentScreen.onDestroy) {
+        currentScreen.onDestroy();
+      }
+      currentScreen = null;
+    }
+    const screenConstructor = screenConstructors.get(name);
+    if (screenConstructor) {
+      const screen = screenConstructor(data);
+      appElement.append(screen.element);
+      currentScreen = {
+        name,
+        element: screen.element,
+        controller: screen.controller,
+        onDestroy: screen.onDestroy
+      };
+      if (screen.onShow) {
+        screen.onShow();
+      }
+    }
+  }
+  function getCurrentScreen() {
+    return currentScreen && currentScreen.name;
+  }
+  function getCurrentController() {
+    return currentScreen && currentScreen.controller;
+  }
+  return {
+    registerScreen,
+    showScreen,
+    getCurrentScreen,
+    getCurrentController
+  };
+}
 const TARGET_SCORE = 100;
 const STORAGE_KEY = "pairEmUp";
 const SETTINGS_STORAGE_KEY = "pairEmUpSettings";
@@ -227,12 +269,20 @@ function createStartScreen() {
   function setupEventListeners() {
     startScreenEl.querySelectorAll(".start-screen__mode-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
-        controller.onModeSelect?.(btn.dataset.mode);
+        if (controller.onModeSelect) {
+          controller.onModeSelect(btn.dataset.mode);
+        }
       });
     });
-    startScreenEl.querySelector("#controls-continue").addEventListener("click", () => controller.onContinue?.());
-    startScreenEl.querySelector("#controls-settings").addEventListener("click", () => controller.onSettings?.());
-    startScreenEl.querySelector("#controls-results").addEventListener("click", () => controller.onResults?.());
+    startScreenEl.querySelector("#controls-continue").addEventListener("click", () => {
+      if (controller.onContinue) controller.onContinue();
+    });
+    startScreenEl.querySelector("#controls-settings").addEventListener("click", () => {
+      if (controller.onSettings) controller.onSettings();
+    });
+    startScreenEl.querySelector("#controls-results").addEventListener("click", () => {
+      if (controller.onResults) controller.onResults();
+    });
   }
   setupEventListeners();
   function onShow() {
@@ -569,7 +619,7 @@ function createSettingsModal() {
   setupEventListeners();
   function show() {
     openModal(modal);
-    updateUI?.();
+    if (updateUI) updateUI();
   }
   function hide() {
     closeCurrentModal();
@@ -746,11 +796,6 @@ function createResultsModal() {
     controller,
     render
   };
-}
-function formatTime(seconds) {
-  const minutes = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
 function shuffleArray(array) {
   const shuffled = [...array];
@@ -1024,25 +1069,25 @@ function createGameScreen({ mode, savedState }) {
     screen.addEventListener("click", (e) => {
       const target = e.target;
       if (target.id === "reset-game" || target.closest("#reset-game")) {
-        controller.onReset?.();
+        if (controller.onReset) controller.onReset();
         return;
       }
       if (target.id === "save-game" || target.closest("#save-game")) {
-        controller.onSave?.();
+        if (controller.onSave) controller.onSave();
         return;
       }
       if (target.id === "settings" || target.closest("#settings")) {
-        controller.onSettings?.();
+        if (controller.onSettings) controller.onSettings();
         return;
       }
       if (target.id === "main-menu" || target.closest("#main-menu")) {
-        controller.onMainMenu?.();
+        if (controller.onMainMenu) controller.onMainMenu();
         return;
       }
       const assistBtn = target.closest(".game-screen__assists-btn");
       if (assistBtn) {
         const assistId = assistBtn.dataset.assist;
-        controller.onAssistUse?.(assistId);
+        if (controller.onAssistUse) controller.onAssistUse(assistId);
         return;
       }
       const gridCell = target.closest(".game-grid__cell");
@@ -1053,7 +1098,7 @@ function createGameScreen({ mode, savedState }) {
           row: parseInt(gridCell.dataset.row),
           col: parseInt(gridCell.dataset.col)
         };
-        controller.onCellSelect?.(cellData);
+        if (controller.onCellSelect) controller.onCellSelect(cellData);
       }
     });
   }
@@ -1167,6 +1212,23 @@ function createGameOutcomeModal() {
     classArr: ["game-outcome-modal__stats"],
     parent: content
   });
+  const modeRow = createElement({
+    tag: "div",
+    classArr: ["game-outcome-modal__stat-row"],
+    parent: statsContainer
+  });
+  createElement({
+    tag: "span",
+    classArr: ["game-outcome-modal__stat-label"],
+    text: "Mode:",
+    parent: modeRow
+  });
+  const modeValue = createElement({
+    tag: "span",
+    classArr: ["game-outcome-modal__stat-value"],
+    text: "Classic Mode",
+    parent: modeRow
+  });
   const scoreRow = createElement({
     tag: "div",
     classArr: ["game-outcome-modal__stat-row"],
@@ -1201,7 +1263,7 @@ function createGameOutcomeModal() {
     text: "00:00",
     parent: timeRow
   });
-  const modeRow = createElement({
+  const movesRow = createElement({
     tag: "div",
     classArr: ["game-outcome-modal__stat-row"],
     parent: statsContainer
@@ -1209,14 +1271,14 @@ function createGameOutcomeModal() {
   createElement({
     tag: "span",
     classArr: ["game-outcome-modal__stat-label"],
-    text: "Mode:",
-    parent: modeRow
+    text: "Moves:",
+    parent: movesRow
   });
-  const modeValue = createElement({
+  const movesValue = createElement({
     tag: "span",
     classArr: ["game-outcome-modal__stat-value"],
-    text: "Classic Mode",
-    parent: modeRow
+    text: "Moves",
+    parent: movesRow
   });
   const buttonsContainer = createElement({
     tag: "div",
@@ -1251,18 +1313,18 @@ function createGameOutcomeModal() {
   };
   function setupEventListeners() {
     playAgainBtn.addEventListener("click", () => {
-      controller.onPlayAgain?.();
+      if (controller.onPlayAgain) controller.onPlayAgain();
       hide();
     });
     mainMenuBtn.addEventListener("click", () => {
-      controller.onMainMenu?.();
+      if (controller.onMainMenu) controller.onMainMenu();
       hide();
     });
     viewResultsBtn.addEventListener("click", () => {
-      controller.onViewResults?.();
+      if (controller.onViewResults) controller.onViewResults();
     });
     overlay.addEventListener("click", () => {
-      controller.onPlayAgain?.();
+      if (controller.onPlayAgain) controller.onPlayAgain();
       hide();
     });
   }
@@ -1286,9 +1348,10 @@ function createGameOutcomeModal() {
     } = outcomeData;
     title.textContent = outcome === "Win" ? "You Win!" : "You Loss";
     subTitle.textContent = outcome === "Win" ? "Congratulations" : "Exceeding the 50 line limit!";
+    modeValue.textContent = `${mode.charAt(0).toUpperCase() + mode.slice(1)} Mode`;
     scoreValue.textContent = score;
     timeValue.textContent = time;
-    modeValue.textContent = `${mode.charAt(0).toUpperCase() + mode.slice(1)} Mode`;
+    movesValue.textContent = moves;
     if (outcome === "Win") {
       title.classList.add("game-outcome-modal__title--win");
       content.classList.add("game-outcome-modal__content--win");
@@ -1340,47 +1403,10 @@ function createUI() {
     getGameOutcomeModal
   };
 }
-function createScreenManager(appElement) {
-  let currentScreen = null;
-  const screenConstructors = /* @__PURE__ */ new Map();
-  function registerScreen(name, constructor) {
-    screenConstructors.set(name, constructor);
-  }
-  function showScreen(name, data = {}) {
-    if (currentScreen) {
-      currentScreen.element.remove();
-      if (currentScreen.onDestroy) {
-        currentScreen.onDestroy();
-      }
-      currentScreen = null;
-    }
-    const screenConstructor = screenConstructors.get(name);
-    if (screenConstructor) {
-      const screen = screenConstructor(data);
-      appElement.append(screen.element);
-      currentScreen = {
-        name,
-        element: screen.element,
-        controller: screen.controller,
-        onDestroy: screen.onDestroy
-      };
-      if (screen.onShow) {
-        screen.onShow();
-      }
-    }
-  }
-  function getCurrentScreen() {
-    return currentScreen?.name;
-  }
-  function getCurrentController() {
-    return currentScreen?.controller;
-  }
-  return {
-    registerScreen,
-    showScreen,
-    getCurrentScreen,
-    getCurrentController
-  };
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
 function createGame(screenManager) {
   const ui = createUI();
@@ -2189,6 +2215,8 @@ function createGame(screenManager) {
       showGameScreen(gameState.mode);
     };
     outcomeModal.controller.onMainMenu = () => {
+      resetGameState();
+      storage.clearCurrentGame();
       showStartScreen();
     };
     outcomeModal.controller.onViewResults = () => {
@@ -2217,7 +2245,7 @@ function createGame(screenManager) {
   }
   return { init };
 }
-document.addEventListener("DOMContentLoaded", (e) => {
+document.addEventListener("DOMContentLoaded", () => {
   const appEl = createElement({ tag: "div", classArr: ["app"], id: "app" });
   document.body.append(appEl);
   const screenManager = createScreenManager(appEl);
