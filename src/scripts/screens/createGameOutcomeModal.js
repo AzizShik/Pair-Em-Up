@@ -1,4 +1,4 @@
-import { createElement, qsElement } from '../utils/dom.js';
+import { createElement } from '../utils/dom.js';
 import { openModal, closeCurrentModal } from '../utils/modal.js';
 
 export function createGameOutcomeModal() {
@@ -44,6 +44,26 @@ export function createGameOutcomeModal() {
     parent: content,
   });
 
+  const modeRow = createElement({
+    tag: 'div',
+    classArr: ['game-outcome-modal__stat-row'],
+    parent: statsContainer,
+  });
+
+  createElement({
+    tag: 'span',
+    classArr: ['game-outcome-modal__stat-label'],
+    text: 'Mode:',
+    parent: modeRow,
+  });
+
+  const modeValue = createElement({
+    tag: 'span',
+    classArr: ['game-outcome-modal__stat-value'],
+    text: 'Classic Mode',
+    parent: modeRow,
+  });
+
   const scoreRow = createElement({
     tag: 'div',
     classArr: ['game-outcome-modal__stat-row'],
@@ -84,7 +104,7 @@ export function createGameOutcomeModal() {
     parent: timeRow,
   });
 
-  const modeRow = createElement({
+  const movesRow = createElement({
     tag: 'div',
     classArr: ['game-outcome-modal__stat-row'],
     parent: statsContainer,
@@ -93,15 +113,15 @@ export function createGameOutcomeModal() {
   createElement({
     tag: 'span',
     classArr: ['game-outcome-modal__stat-label'],
-    text: 'Mode:',
-    parent: modeRow,
+    text: 'Moves:',
+    parent: movesRow,
   });
 
-  const modeValue = createElement({
+  const movesValue = createElement({
     tag: 'span',
     classArr: ['game-outcome-modal__stat-value'],
-    text: 'Classic Mode',
-    parent: modeRow,
+    text: 'Moves',
+    parent: movesRow,
   });
 
   const buttonsContainer = createElement({
@@ -142,21 +162,21 @@ export function createGameOutcomeModal() {
 
   function setupEventListeners() {
     playAgainBtn.addEventListener('click', () => {
-      controller.onPlayAgain?.();
+      if (controller.onPlayAgain) controller.onPlayAgain();
       hide();
     });
 
     mainMenuBtn.addEventListener('click', () => {
-      controller.onMainMenu?.();
+      if (controller.onMainMenu) controller.onMainMenu();
       hide();
     });
 
     viewResultsBtn.addEventListener('click', () => {
-      controller.onViewResults?.();
+      if (controller.onViewResults) controller.onViewResults();
     });
 
     overlay.addEventListener('click', () => {
-      controller.onPlayAgain?.();
+      if (controller.onPlayAgain) controller.onPlayAgain();
       hide();
     });
   }
@@ -187,10 +207,10 @@ export function createGameOutcomeModal() {
     subTitle.textContent =
       outcome === 'Win' ? 'Congratulations' : 'Exceeding the 50 line limit!';
 
+    modeValue.textContent = `${mode.charAt(0).toUpperCase() + mode.slice(1)} Mode`;
     scoreValue.textContent = score;
     timeValue.textContent = time;
-    modeValue.textContent = `${mode.charAt(0).toUpperCase() + mode.slice(1)} Mode`;
-
+    movesValue.textContent = moves;
     if (outcome === 'Win') {
       title.classList.add('game-outcome-modal__title--win');
       content.classList.add('game-outcome-modal__content--win');

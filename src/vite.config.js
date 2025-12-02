@@ -45,23 +45,23 @@ export default defineConfig(({ mode }) => {
           entryFileNames: 'js/[name].js',
           chunkFileNames: 'js/[name].js',
           assetFileNames: ({ name }) => {
-            if (/\.(css|scss)$/.test(name ?? '')) {
+            if (/\.(css|scss)$/.test(name || '')) {
               return 'css/[name][extname]';
             }
 
-            if (/\.(jpe?g|png|webp|avif|gif)$/.test(name ?? '')) {
+            if (/\.(jpe?g|png|webp|avif|gif)$/.test(name || '')) {
               return 'assets/images/[name][extname]';
             }
 
-            if (/\.(woff|woff2)$/.test(name ?? '')) {
+            if (/\.(woff|woff2)$/.test(name || '')) {
               return 'assets/fonts/[name][extname]';
             }
 
-            if (/\.svg$/.test(name ?? '')) {
+            if (/\.svg$/.test(name || '')) {
               return 'assets/icons/[name][extname]';
             }
 
-            if (/\.mp3$/.test(name ?? '')) {
+            if (/\.mp3$/.test(name || '')) {
               return 'assets/notes/[name][extname]';
             }
 

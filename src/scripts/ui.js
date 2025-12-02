@@ -1,9 +1,7 @@
-import { createElement, qsElement } from './utils/dom.js';
-import { gameState } from './gameState.js';
 import { createStartScreen } from './screens/createStartScreen.js';
 import { createSettingsModal } from './screens/createSetingsModal.js';
 import { createResultsModal } from './screens/createResultsModal.js';
-import { createGameScreen } from './screens/createGamescreen.js';
+import { createGameScreen } from './screens/createGameScreen.js';
 import { createGameOutcomeModal } from './screens/createGameOutcomeModal.js';
 
 export function createUI() {

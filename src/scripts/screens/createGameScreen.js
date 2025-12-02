@@ -1,8 +1,6 @@
-import { createElement, qsElement, qsAll } from '../utils/dom.js';
+import { createElement } from '../utils/dom.js';
 import { gameState } from '../gameState.js';
-import { TARGET_SCORE, STORAGE_KEY, MAX_LINES } from '../constants.js';
-import { openModal } from '../utils/modal.js';
-import { formatTime } from '../utils/formatTime.js';
+import { TARGET_SCORE, MAX_LINES } from '../constants.js';
 import { completeShuffle } from '../utils/shuffle.js';
 import { createChaoticGrid } from '../utils/random.js';
 
@@ -278,29 +276,29 @@ export function createGameScreen({ mode, savedState }) {
       const target = e.target;
 
       if (target.id === 'reset-game' || target.closest('#reset-game')) {
-        controller.onReset?.();
+        if (controller.onReset) controller.onReset();
         return;
       }
 
       if (target.id === 'save-game' || target.closest('#save-game')) {
-        controller.onSave?.();
+        if (controller.onSave) controller.onSave();
         return;
       }
 
       if (target.id === 'settings' || target.closest('#settings')) {
-        controller.onSettings?.();
+        if (controller.onSettings) controller.onSettings();
         return;
       }
 
       if (target.id === 'main-menu' || target.closest('#main-menu')) {
-        controller.onMainMenu?.();
+        if (controller.onMainMenu) controller.onMainMenu();
         return;
       }
 
       const assistBtn = target.closest('.game-screen__assists-btn');
       if (assistBtn) {
         const assistId = assistBtn.dataset.assist;
-        controller.onAssistUse?.(assistId);
+        if (controller.onAssistUse) controller.onAssistUse(assistId);
         return;
       }
 
@@ -312,7 +310,7 @@ export function createGameScreen({ mode, savedState }) {
           row: parseInt(gridCell.dataset.row),
           col: parseInt(gridCell.dataset.col),
         };
-        controller.onCellSelect?.(cellData);
+        if (controller.onCellSelect) controller.onCellSelect(cellData);
       }
     });
   }
@@ -333,7 +331,7 @@ export function createGameScreen({ mode, savedState }) {
 
       row.forEach((number, colIdx) => {
         if (number === null) {
-          const cell = createElement({
+          createElement({
             tag: 'button',
             classArr: ['game-grid__cell', 'game-grid__cell--empty'],
             text: '',
@@ -341,7 +339,7 @@ export function createGameScreen({ mode, savedState }) {
             parent: rowEl,
           });
         } else if (number === 0) {
-          const cell = createElement({
+          createElement({
             tag: 'button',
             classArr: ['game-grid__cell', 'game-grid__cell--blank'],
             text: '',
@@ -349,7 +347,7 @@ export function createGameScreen({ mode, savedState }) {
             parent: rowEl,
           });
         } else {
-          const cell = createElement({
+          createElement({
             tag: 'button',
             classArr: ['game-grid__cell'],
             text: number.toString(),

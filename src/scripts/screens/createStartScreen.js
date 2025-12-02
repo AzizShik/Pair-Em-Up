@@ -1,4 +1,4 @@
-import { createElement, qsAll, qsElement } from '../utils/dom.js';
+import { createElement, qsElement } from '../utils/dom.js';
 import { gameState } from '../gameState.js';
 import { STORAGE_KEY } from '../constants.js';
 
@@ -108,21 +108,29 @@ export function createStartScreen() {
   function setupEventListeners() {
     startScreenEl.querySelectorAll('.start-screen__mode-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        controller.onModeSelect?.(btn.dataset.mode);
+        if (controller.onModeSelect) {
+          controller.onModeSelect(btn.dataset.mode);
+        }
       });
     });
 
     startScreenEl
       .querySelector('#controls-continue')
-      .addEventListener('click', () => controller.onContinue?.());
+      .addEventListener('click', () => {
+        if (controller.onContinue) controller.onContinue();
+      });
 
     startScreenEl
       .querySelector('#controls-settings')
-      .addEventListener('click', () => controller.onSettings?.());
+      .addEventListener('click', () => {
+        if (controller.onSettings) controller.onSettings();
+      });
 
     startScreenEl
       .querySelector('#controls-results')
-      .addEventListener('click', () => controller.onResults?.());
+      .addEventListener('click', () => {
+        if (controller.onResults) controller.onResults();
+      });
   }
 
   setupEventListeners();

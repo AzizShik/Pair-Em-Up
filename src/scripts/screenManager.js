@@ -32,11 +32,11 @@ export function createScreenManager(appElement) {
   }
 
   function getCurrentScreen() {
-    return currentScreen?.name;
+    return currentScreen && currentScreen.name;
   }
 
   function getCurrentController() {
-    return currentScreen?.controller;
+    return currentScreen && currentScreen.controller;
   }
 
   return {

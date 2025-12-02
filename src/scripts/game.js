@@ -9,8 +9,6 @@ import { createStorage } from './storage.js';
 import { GRID_COLS, MAX_LINES, TARGET_SCORE } from './constants.js';
 import { createElement } from './utils/dom.js';
 import { formatTime } from './utils/formatTime.js';
-import { completeShuffle } from './utils/shuffle.js';
-import { createChaoticGrid } from './utils/random.js';
 import { playSound } from './audio.js';
 
 export function createGame(screenManager) {
@@ -1017,6 +1015,8 @@ export function createGame(screenManager) {
     };
 
     outcomeModal.controller.onMainMenu = () => {
+      resetGameState();
+      storage.clearCurrentGame();
       showStartScreen();
     };
 

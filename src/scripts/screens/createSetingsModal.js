@@ -20,7 +20,7 @@ export function createSettingsModal() {
     parent: modal,
   });
 
-  const header = createElement({
+  createElement({
     tag: 'div',
     classArr: ['modal__header'],
     parent: content,
@@ -61,7 +61,7 @@ export function createSettingsModal() {
     parent: audioSection,
   });
 
-  const audioToggle = createElement({
+  createElement({
     tag: 'label',
     classArr: ['settings-toggle'],
     parent: audioSection,
@@ -139,7 +139,7 @@ export function createSettingsModal() {
     });
   });
 
-  const footer = createElement({
+  createElement({
     tag: 'div',
     classArr: ['modal__footer'],
     parent: content,
@@ -200,7 +200,7 @@ export function createSettingsModal() {
 
   function show() {
     openModal(modal);
-    updateUI?.();
+    if (updateUI) updateUI();
   }
 
   function hide() {
