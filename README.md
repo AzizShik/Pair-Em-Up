@@ -21,11 +21,12 @@ Live Demo: https://azizshik.github.io/Pair-Em-Up/
 
 ## Game Modes
 
-- **Classic** – Numbers 1-19 placed in a beautiful sequential pattern
+- **Classic** – Numbers 1-9 placed in a beautiful sequential pattern
 - **Random** – Same numbers, but completely shuffled
 - **Chaotic** – 27 random digits from 1-9, duplicates allowed
 
 ## Screenshot
+<img width="1920" height="953" alt="image" src="https://github.com/user-attachments/assets/012e1825-ddbc-4a70-9d25-e408e0977eab" />
 
 ## Play Now
 
