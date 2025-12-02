@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   return {
     root: resolve(__dirname, 'src'),
     publicDir: resolve(__dirname, 'src/public'),
-    base: mode === 'production' ? '/azizshik-JSFE2025Q3/pair-em-up/' : '/',
+    base: mode === 'production' ? '/Pair-Em-Up/' : '/',
     // base: '/',
     server: {
       port: 8080,
@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [],
     build: {
-      outDir: resolve(__dirname, 'dist/pair-em-up/'),
+      outDir: resolve(__dirname, 'dist/'),
       emptyOutDir: true,
       minify: false,
       cssMinify: false,

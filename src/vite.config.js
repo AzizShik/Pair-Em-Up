@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   return {
     root: resolve(__dirname, 'src'),
     publicDir: resolve(__dirname, 'src/public'),
-    base: mode === 'production' ? '/azizshik-JSFE2025Q3/pair-em-up/' : '/',
+    base: mode === 'production' ? '/pair-em-up/' : '/',
     // base: '/',
     server: {
       port: 8080,
@@ -23,7 +23,16 @@ export default defineConfig(({ mode }) => {
         scss: {},
       },
     },
-    plugins: [],
+    plugins: [
+      viteStaticCopy({
+        targets: [
+          {
+            src: resolve(__dirname, 'src/assetss/icons/*.*'),
+            dest: resolve(__dirname, 'dist/assetss/icons/'),
+          },
+        ],
+      }),
+    ],
     build: {
       outDir: resolve(__dirname, 'dist/pair-em-up/'),
       emptyOutDir: true,
